@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For You ✨</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at center, #fff7fa 0%, #fbe9ef 60%, #f7dce7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 16px;
+            position: relative;
+        }
+
+        /* Soft vignette for premium look */
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.08));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(18px);
+            padding: 32px 26px;
+            border-radius: 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            animation: fadeIn 1.2s ease, glow 3s infinite alternate;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .image img {
+            width: 160px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        p {
+            font-size: 16px;
+            color: #444;
+            line-height: 1.7;
+            min-height: 130px;
+            padding: 0 4px;
+        }
+
+        .heart {
+            font-size: 32px;
+            margin-top: 16px;
+            animation: beat 1.5s infinite;
+        }
+
+        /* Floating emojis ABOVE everything */
+        .floating-heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 24px;
+            animation: floatUp linear infinite;
+            opacity: 0.9;
+            z-index: 9999;
+        }
+
+        @keyframes floatUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-120vh);
+                opacity: 0;
+            }
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Glow + fade animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 25px rgba(255, 180, 200, 0.4);
+            }
+
+            to {
+                box-shadow: 0 0 45px rgba(255, 150, 180, 0.8);
+            }
+        }
+
+        @keyframes beat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.18);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="confetti"></canvas>
+
+    <div class="card">
+        <h1>Congrats Wissami ✨</h1>
+
+        <div class="image">
+            <img src="BwypK6Ts.jpg" alt="Congrats">
+        </div>
+
+        <p id="text"></p>
+
+        <div class="heart">💗</div>
+    </div>
+
+    <script>
+        /* TYPEWRITER */
+        const message = `Semester validated ✔️
+
+I know how much effort you put into this.
+Even when it was hard, you kept going.
+
+I’m truly proud of you 🤍`;
+
+        let i = 0;
+        const speed = 35;
+
+        function type() {
+            if (i < message.length) {
+                document.getElementById("text").innerHTML +=
+                    message.charAt(i) === "\n" ? "<br>" : message.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            }
+        }
+        type();
+
+        /* CONFETTI */
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const confetti = Array.from({ length: 140 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            r: Math.random() * 5 + 3,
+            d: Math.random() * 40,
+            color: `hsl(${Math.random() * 360}, 70%, 75%)`
+        }));
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confetti.forEach(c => {
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+                ctx.fillStyle = c.color;
+                ctx.fill();
+            });
+            confetti.forEach(c => {
+                c.y += Math.cos(c.d) + 1.2;
+                if (c.y > canvas.height) c.y = -10;
+            });
+        }
+        setInterval(draw, 20);
+
+        /* FLOATING HEARTS */
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.innerHTML = '🎓';
+            heart.style.animationDuration = 4 + Math.random() * 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }, 600);
+    </script>
+
+</body>
+
+</html>
